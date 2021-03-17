@@ -1,0 +1,248 @@
+{% extends 'misconduct_detection_app/app_layout.html' %}
+
+{% block head %}
+    {# load previous script declarations #}
+    {{ block.super }}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/results.css' %}">
+    <!-- Receive Django templates results here-->
+    <script>
+        const detectionResults = JSON.parse("{{ ResultsJsonString|escapejs }}");
+        const segmentFiles = JSON.parse("{{ segmentFilesJsonString|escapejs }}");
+        let submissionCount = "{{ SubmissionNumber }}";
+        let isFileIncluded = "{{ isFileIncluded }}";
+        const totalFileCount = {{ totalFileCount }};
+        let submissionPathPrefix;
+        {% if submissionPathPrefix is not none %}
+            submissionPathPrefix = "{{ submissionPathPrefix }}";
+        {% endif %}
+    </script>
+    <script src="{% static 'js/results.js' %}" defer></script>
+    <!-- Report generation script source: https://rawgit.com/MrRio/jsPDF/master/docs/ -->
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+    <!-- script src="{% static 'js/jspdf.js' %}" ></script -->
+    <!-- Beautify code snippets, source: https://github.com/google/code-prettify -->
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <style>
+        li.L0, li.L1, li.L2, li.L3,
+        li.L5, li.L6, li.L7, li.L8 {
+            list-style-type: decimal !important;
+        }
+    </style>
+
+    <script>
+        // JavaScript for disabling form submissions if there are invalid fields
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+{% endblock %}
+
+{% block sideButton %}
+    <div class="col-md-3">
+        <a href="#">
+            <button type="button" class="btn btn-light border border-dark btn-lg btn-custom-size disabled">
+                <div class="row">
+                    <div class="col-2">
+                        <i class="material-icons">navigate_next</i>
+                    </div>
+                    <div class="col-8">
+                        Next
+                    </div>
+                </div>
+
+            </button>
+        </a>
+        <br>
+        <a href="\select\">
+            <button type="button" class="btn btn-light border border-dark btn-lg btn-custom-size">
+                <div class="row">
+                    <div class="col-2">
+                        <i class="material-icons">navigate_before</i>
+                    </div>
+                    <div class="col-8">
+                        Back
+                    </div>
+                </div>
+            </button>
+        </a>
+        <br>
+        <button type="button" class="btn btn-light border border-dark btn-lg btn-custom-size" data-toggle="modal"
+                data-target="#cancelButton">
+            <div class="row">
+                <div class="col-2">
+                    <i class="material-icons">cancel</i>
+                </div>
+                <div class="col-8">
+                    Cancel
+                </div>
+            </div>
+        </button>
+        <br>
+        {% if request.user.is_authenticated %}
+        
+   
+       
+        <!-- <form class="form-inline" role="form" method="post" enctype="multipart/form-data" accept-charset="utf-8"
+              id="savesession">
+            {% csrf_token %}
+            <input type="button" name="button" id="uploadFileInput">
+            
+                            Save Session
+                        
+        
+        </form> -->
+
+        <button type="button" class="btn btn-primary" onclick= "savesess()">Save changes</button>
+        <script>  
+             function savesess() {
+
+                var name = window.prompt("Enter name of the session: ");
+                
+                
+               
+                $.ajax({
+
+
+
+                url: "save/"+name,
+                type: 'POST',
+                cache: false,
+               
+                //headers:{'X-CSRFToken':csrfToken},
+          
+                // beforeSend: function(){
+                    
+                //     alert("Before");
+                //     saving = true;
+                
+                // },
+                success: function (data) {
+                    
+                    alert("Success");
+                    saving = false;
+                    
+
+                },
+                 error: function (xhr, ajaxOptions, thrownError) {
+                    console.warn("Error sending the file");
+                    alert("Can't save more than 5 sessions. Delete atleast 1 session to continue");
+                    
+                }
+                
+            });
+
+            }
+
+        </script>
+
+        {% endif %}
+    </div>
+    <hr>
+    <div class="col-md-3">
+        <button id="generateReport" type="button" class="btn btn-outline-primary btn-lg btn-custom-size"
+                data-toggle="modal"
+                data-target="#reportModal">
+            <div class="row">
+                <div class="col-2">
+                    <i class="material-icons">assignment</i>
+                </div>
+                <div class="col-8">
+                    Report
+                </div>
+            </div>
+        </button>
+    </div>
+
+    <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form class="needs-validation" novalidate id="report-form">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Report Generation Form</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <label class="col-form-label font-weight-bold">Student Details</label>
+                        <div class="form-group">
+                            <label class="col-form-label">Matriculation number:</label>
+                            <input type="text" class="form-control" id="student-matriculation" placeholder="Required"
+                                   required>
+                            <div class="invalid-feedback">
+                                Please enter the student's matriculation number.
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label class="col-form-label">Name:</label>
+                                    <input type="text" class="form-control" id="student-name" placeholder="Optional">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="col-form-label">Surname:</label>
+                                    <input type="text" class="form-control" id="student-surname" placeholder="Optional">
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <label class="col-form-label font-weight-bold">Course Details</label>
+                        <div class="form-group">
+                            <label class="col-form-label">Name:</label>
+                            <input type="text" class="form-control" id="course-name" placeholder="Optional">
+                            <label class="col-form-label">Coursework:</label>
+                            <input type="text" class="form-control" id="coursework" placeholder="Optional">
+                        </div>
+                        <hr>
+                        <label class="col-form-label font-weight-bold">Segments</label>
+                        <div class="form-group">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="segmentRadios" id="segmentsRadio1"
+                                       value="brief" checked>
+                                <label class="form-check-label" for="segmentsRadio1">
+                                    Brief
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="segmentRadios" id="segmentsRadio2"
+                                       value="detailed">
+                                <label class="form-check-label" for="segmentsRadio2">
+                                    Detailed
+                                </label>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label font-weight-bold">Notes</label>
+                            <textarea class="form-control" id="report-notes" placeholder="Optional"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="generate">Generate</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid" id="segmentsContainer"></div>
+{% endblock %}

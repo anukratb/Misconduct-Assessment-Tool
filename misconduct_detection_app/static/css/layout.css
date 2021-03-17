@@ -1,0 +1,72 @@
+#layoutHeader {
+    position: absolute;
+    left: 50%;
+    font-size: 35px;
+    font-family:'Segoe UI',Arial,sans-serif;
+    transform: translateX(-50%);
+}
+
+.navbar .right-panel > div {
+    display: inline-block;
+}
+
+.btn-custom-size {
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
+}
+
+.popover {
+    width: 600px;
+    height: 400px;
+    overflow-y: scroll;
+}
+
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
+
+.material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
+.material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
+
+.material-icons.md-light { color: rgba(255, 255, 255, 1); }
+.material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3); }
+
+.material-icons.md-primary { color: rgba(0, 116, 217, 0.705); }
+
+.material-icons, .icon-text {
+    vertical-align: text-bottom;
+}
+
+.material-multiline {
+    font-size: 26px;
+    vertical-align: -75%;
+}
+
+body {
+    height: 100vh;
+    overflow-x: hidden;
+    padding-top: 65px;
+}
+
+/* pad the footer nav bar */
+body > .container-fluid {
+    padding-bottom: 60px;
+}
+
+.form-error {
+    color: #dc3545;
+}
+
+.alert-container .alert {
+    width: 100%;
+    margin-left: 30px;
+}
+
+.modal-footer.note {
+    border: none;
+    padding-top: 0;
+    font-size: 14px;
+    color: #6e6e6e;
+}

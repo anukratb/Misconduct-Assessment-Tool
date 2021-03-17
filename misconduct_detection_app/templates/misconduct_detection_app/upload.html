@@ -1,0 +1,252 @@
+{% extends 'misconduct_detection_app/app_layout.html' %}
+
+{% block head %}
+    {# load previous script declarations #}
+    {{ block.super }}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/upload.css' %}">
+    <script src="{% static 'js/upload.js' %}" defer></script>
+
+    <script>
+        let numberOfSubmissions = "{{ numberOfSubmissions }}";
+    </script>
+{% endblock %}
+
+{% block sideButton %}
+    <div class="col-md-3">
+        <a href="\select\">
+            <button type="button"
+                    class="btn btn-light border border-dark btn-lg btn-custom-size" id="nextButton" disabled>
+                <div class="row">
+                    <div class="col-2">
+                        <i class="material-icons">navigate_next</i>
+                    </div>
+                    <div class="col-8">
+                        Next
+                    </div>
+                </div>
+            </button>
+        </a>
+        <br>
+        <a href="\">
+            <button type="button" class="btn btn-light border border-dark btn-lg btn-custom-size">
+                <div class="row">
+                    <div class="col-2">
+                        <i class="material-icons">navigate_before</i>
+                    </div>
+                    <div class="col-8">
+                        Back
+                    </div>
+                </div>
+            </button>
+        </a>
+        
+        <br>
+        <button type="button" class="btn btn-light border border-dark btn-lg btn-custom-size" data-toggle="modal"
+                data-target="#cancelButton">
+            <div class="row">
+                <div class="col-2">
+                    <i class="material-icons">cancel</i>
+                </div>
+                <div class="col-8">
+                    Cancel
+                </div>
+            </div>
+        </button>
+        <br>
+        <br>
+        <button type="button" class="btn btn-primary" onclick= "moss()">Moss Mode</button>
+        <script>  
+             function moss() {
+
+                
+               
+                $.ajax({
+
+                url: "selectcodemoss/",
+                type: 'POST',
+                cache: false,
+               
+                //headers:{'X-CSRFToken':csrfToken},
+          
+                // beforeSend: function(){
+                    
+                //     alert("Before");
+                //     saving = true;
+                
+                // },
+                success: function (data) {
+                    window.location = "runningWaitingPage";
+                    
+                    alert("Success");
+                    saving = false;
+                    
+
+                },
+                 error: function (xhr, ajaxOptions, thrownError) {
+                    
+                    alert("Please upload files");
+                    
+                }
+                
+            });
+
+            }
+
+        </script>
+        <br>
+        {% if request.user.is_authenticated %}
+        
+   
+       
+        <!-- <form class="form-inline" role="form" method="post" enctype="multipart/form-data" accept-charset="utf-8"
+              id="savesession">
+            {% csrf_token %}
+            <input type="button" name="button" id="uploadFileInput">
+            
+                            Save Session
+                        
+        
+        </form> -->
+
+        <button type="button" class="btn btn-primary" onclick= "savesess()">Save changes</button>
+        <script>  
+             function savesess() {
+
+                var name = window.prompt("Enter name of the session: ");
+                
+                
+               
+                $.ajax({
+
+
+
+                url: "save/"+name,
+                type: 'POST',
+                cache: false,
+               
+                //headers:{'X-CSRFToken':csrfToken},
+          
+                // beforeSend: function(){
+                    
+                //     alert("Before");
+                //     saving = true;
+                
+                // },
+                success: function (data) {
+                    
+                    alert("Success");
+                    saving = false;
+                    
+
+                },
+                 error: function (xhr, ajaxOptions, thrownError) {
+                    console.warn("Error sending the file");
+                    alert("Can't save more than 5 sessions. Delete atleast 1 session to continue");
+                    
+                }
+                
+            });
+
+            }
+
+        </script>
+
+        {% endif %}
+    </div>
+
+    <hr>
+    <div class="col-md-3">
+        <form class="form-inline" role="form" method="post" enctype="multipart/form-data" accept-charset="utf-8"
+              id="uploadFileForm">
+            {% csrf_token %}
+            <input type="file" name="file" id="uploadFileInput">
+            <label for="uploadFileInput" class="btn btn-outline-primary btn-lg btn-custom-size">
+                <div class="row">
+                    <div class="col-2">
+                        <i class="material-icons material-multiline">cloud_upload</i>
+                    </div>
+                    <div class="col-8">
+                        <div id="uploadFileLabel">
+                            Upload
+                        </div>
+                        File
+                    </div>
+                </div>
+            </label>
+        </form>
+
+        <br/>
+
+        <form class="form-inline" role="form" method="post" enctype="multipart/form-data" accept-charset="utf-8"
+              id="uploadFolderForm" value="value">
+            {% csrf_token %}
+            <input type="file" name="file" id="uploadFolderInput" directory multiple webkitdirectory mozdirectory>
+            <label for="uploadFolderInput" class="btn btn-outline-primary btn-lg btn-custom-size">
+                <div class="row">
+                    <div class="col-2">
+                        <i class="material-icons material-multiline">cloud_upload</i>
+                    </div>
+                    <div class="col-8">
+                        <div id="uploadFolderLabel">
+                            Upload
+                        </div>
+                        Folder
+
+                    </div>
+                </div>
+            </label>
+        </form>
+        <br>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="languageSelectionModal" tabindex="-1" role="dialog"
+         aria-labelledby="languageSelectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="languageSelectionModalTitle">Uploaded file type not supported</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    The file uploaded has an unsupported extension.
+                    As a result the detection library will treat the submissions as plain text by default.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="changeDetectionLib">Change detection language
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block content %}
+    <p id="uploadContent">
+        Upload the <b>file</b> (i.e. <i>suspect submission</i>) to be checked.<br>
+        Upload the <b>folder</b> which <i>contains all of the submissions</i> to be
+        compared. <br>
+        The <b>folder</b> should have <i>each submission in separate folder</i> in the parent directory.
+        Example folder structure: <br>
+        <img src="{% static 'images/upload_folder_structure.png' %}" class="img-fluid" alt="Folder Structure image">
+        <br>
+        <br>
+        When the files are uploaded, click <i>Next</i> to select the suspect segments. <br>
+        <i>Back</i>: return to the previous page while keeping the progress made so far.<br>
+        <i>Cancel</i>: cancel all progress made and return to home page.<br>
+    </p>
+
+    <hr>
+
+    <div>
+        <h5 id="uploadFileCheck"><i class="material-icons">block</i> You haven't uploaded a file.</h5>
+        <h5><span id="uploadFolderCheck"><i class="material-icons">block</i> You haven't uploaded a folder.</span> <span
+                id="fileIncludedCheck"></span></h5>
+    </div>
+
+{% endblock %}

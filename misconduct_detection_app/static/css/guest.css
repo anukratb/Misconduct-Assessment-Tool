@@ -1,0 +1,38 @@
+.contents {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-content {
+  width: 480px;
+  margin-top: 50px;
+  padding: 35px;
+  border: 1px solid #ced4da;
+  border-radius: 10px;
+  box-shadow: 8px 8px 5px -2px rgba(106,109,138,.2)
+}
+
+.login-content .welcome-message {
+  margin-bottom: 40px;
+}
+
+.login-content .welcome-message p {
+  font-size: 18px;
+  line-height: 22px;
+}
+
+span.login-redirect {
+  margin: 15px 0 10px;
+  display: block;
+  font-size: 14px;
+}
+
+.form-text.text-muted {
+  padding-bottom: 16px;
+}
+
+label {
+  font-size: 18px;
+  line-height: 1.5em;
+}

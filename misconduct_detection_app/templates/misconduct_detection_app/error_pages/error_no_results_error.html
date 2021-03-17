@@ -1,0 +1,76 @@
+{% extends 'misconduct_detection_app/app_layout.html' %}
+
+{% block head %}
+    {# load previous script declarations #}
+    {{ block.super }}
+    {% load static %}
+    <script src="{% static 'js/error_pages/error_no_results_error.js' %}" defer></script>
+{% endblock %}
+
+{% block sideButton %}
+    <div class="col-md-3">
+        <a href="#">
+            <button type="button" class="btn btn-light border border-dark btn-lg btn-custom-size disabled">
+                <div class="row">
+                    <div class="col-2">
+                        <i class="material-icons">navigate_next</i>
+                    </div>
+                    <div class="col-8">
+                        Next
+                    </div>
+                </div>
+
+            </button>
+        </a>
+        <br>
+        <a href="\select\">
+            <button type="button" class="btn btn-light border border-dark btn-lg btn-custom-size">
+                <div class="row">
+                    <div class="col-2">
+                        <i class="material-icons">navigate_before</i>
+                    </div>
+                    <div class="col-8">
+                        Back
+                    </div>
+                </div>
+            </button>
+        </a>
+        <br>
+        <button type="button" class="btn btn-light border border-dark btn-lg btn-custom-size" data-toggle="modal"
+                data-target="#cancelButton">
+            <div class="row">
+                <div class="col-2">
+                    <i class="material-icons">cancel</i>
+                </div>
+                <div class="col-8">
+                    Cancel
+                </div>
+            </div>
+        </button>
+    </div>
+    <hr>
+{% endblock %}
+
+{% block content %}
+    <h3>
+        Error: No results obtained
+    </h3>
+
+    <br>
+
+    <p>
+        No result file was produced by your request. Make sure you have at least one segment selected and the
+        programming language of the submissions is correctly selected and supported by the similarity detection package.
+        Some error occurs and prevent the tool from obtaining results.
+    </p>
+    <hr>
+    <p>
+        If you think you shouldn't be seeing this error, please contact the system's administrator.
+    </p>
+    <br>
+    <p>
+        <i>Back</i>: to go back to the Segment Selection Page.
+        <br>
+        <i>Cancel</i>: cancel all progress made and return to home page.
+    </p>
+{% endblock %}

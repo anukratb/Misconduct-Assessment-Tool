@@ -1,0 +1,47 @@
+#codeDisplayText {
+    font-size: 16px;
+    height: 85vh;
+    overflow-y: scroll;
+    overflow-x: scroll;
+}
+
+#inputText {
+    font-size: 16px;
+}
+
+/*
+input[type="text"] {
+    display: none;
+}
+*/
+#addSegmentIcon {
+    font-size: 26px;
+}
+
+#middleButtons > button > .material-icons {
+    font-size: 4vh;
+}
+#middleButtons{
+    margin-left: -1%;
+    margin-right: -1%;
+    position: relative;
+}
+
+#segmentDisplayBox {
+    overflow-y: scroll;
+    overflow-x: scroll;
+}
+
+.btn-custom-sm {
+    width: 10px;
+    height: 10px;
+}
+
+#addSegmentButtonBig {
+    width: 6.5vw;
+    height: 60%;
+}
+
+#codeDisplay.border {
+    border-width: 2px !important;
+}

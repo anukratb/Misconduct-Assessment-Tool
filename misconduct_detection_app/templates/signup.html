@@ -1,0 +1,77 @@
+{% extends 'registration/login_layout.html' %}
+
+{% block head %}
+    {{ block.super }}
+    {% load static %}
+    <script>
+        pageName = "Sign Up"
+    </script>
+{% endblock %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+    <div class="login-content">
+        <form method="post" action="{% url 'signup' %}">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <label for="id_username">Username:</label> 
+            {% if form.username.errors %}
+                <small class="form-text">
+                    <ul class="form-error">
+                    {% for error in form.username.errors %}
+                        <li><strong>{{ error|escape }}</strong></li>
+                    {% endfor %}
+                    </ul>
+                </small>
+            {% endif %}
+            <input class="form-control" id="id_username" type="text" name="username" maxlength="150" aria-describedby="usernameHelpBlock"/>
+            <small id="usernameHelpBlock" class="form-text text-muted">
+                Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+            </small>
+
+            <label for="id_password1">Password:</label> 
+            {% if form.password1.errors %}
+                <small class="form-text">
+                    <ul class="form-error">
+                    {% for error in form.password1.errors %}
+                        <li><strong>{{ error|escape }}</strong></li>
+                    {% endfor %}
+                    </ul>
+                </small>
+            {% endif %}
+            <input class="form-control" type="password" name="password1" id="id_password1" aria-describedby="password1HelpBlock"/>
+            <small id="password1HelpBlock" class="form-text text-muted">
+                <ul>
+                    <li>Your password can't be too similar to your other personal information.</li>
+                    <li>Your password must contain at least 8 characters.</li>
+                    <li>Your password can't be a commonly used password.</li>
+                    <li>Your password can't be entirely numeric.</li>
+                </ul>
+            </small>
+
+            <label for="id_password2">Password confirmation:</label> 
+            {% if form.password2.errors %}
+                <small class="form-text">
+                    <ul class="form-error">
+                    {% for error in form.password2.errors %}
+                        <li><strong>{{ error|escape }}</strong></li>
+                    {% endfor %}
+                    </ul>
+                </small>
+            {% endif %}
+            <input class="form-control" type="password" name="password2" id="id_password2" aria-describedby="password2HelpBlock"/>
+            <small id="password2HelpBlock" class="form-text text-muted">
+                Enter the same password as before, for verification.
+            </small>
+            <br>
+            <input class="btn btn-primary btn-block" type="submit" value="Sign up"/>
+            <input type="hidden" name="next" value="{{ next }}"/>
+            <!-- {{ form }} -->
+        </form>
+        <div class="dropdown-divider"></div>
+        <span class="login-redirect">Already have an account?</span>
+        <a class="btn btn-secondary btn-block" href="{% url 'login' %}?next={{ request.path }}">Log in</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,225 @@
+{% extends 'misconduct_detection_app/app_layout.html' %}
+
+{% block head %}
+    {# load previous script declarations #}
+    {{ block.super }}
+    {% load static %}
+    <script>
+        pageName = "Welcome";
+    </script>
+{% endblock %}
+
+{% block sideButton %}
+    <div class="col-md-3">
+        <a href="upload">
+            <button class="btn btn-light border border-dark btn-lg btn-custom-size">
+                <div class="row">
+                    <div class="col-2">
+                        <i class="material-icons">navigate_next</i>
+                    </div>
+                    <div class="col-8">
+                        Next
+                    </div>
+                </div>
+            </button>
+        </a>
+    </div>
+    <br>
+
+    {% if request.user.is_authenticated %}
+
+    
+
+        {% for ws in user_workspaces %}
+                <button type="button" class="btn btn-primary" onclick= "loadsess('{{ws}}')">{{ ws }}</button>
+                <button type="button" class="btn btn-primary" onclick= "delsess('{{ws}}')">Delete {{ ws }}</button>
+                <br>
+        
+                <!-- TODO: add delete button -->
+            {% empty%}
+
+
+         {% endfor %}
+                
+        
+        
+
+        <!-- <button type="button" class="btn btn-primary" onclick= "loadsess()">name9</button>  -->
+        <script>  
+             function loadsess(workspace) {
+
+               
+                
+               
+                $.ajax({
+
+                url: "load/"+workspace,
+                type: 'POST',
+                cache: false,
+               
+                //headers:{'X-CSRFToken':csrfToken},
+          
+                // beforeSend: function(){
+                    
+                //     alert("Before");
+                //     saving = true;
+                
+                // },
+                success: function (data) {
+                    
+                    alert("Success");
+                    saving = false;
+                    
+
+                },
+                 error: function (xhr, ajaxOptions, thrownError) {
+                    console.warn("Error sending the file");
+                    alert("Error: folder not uploaded");
+                    
+                }
+                
+            });
+                window.location = "/";
+
+            }
+
+        </script>
+
+        <script>  
+             function delsess(workspace) {
+
+               
+                
+               
+                $.ajax({
+
+                url: "delete/"+workspace,
+                type: 'POST',
+                cache: false,
+               
+                //headers:{'X-CSRFToken':csrfToken},
+          
+                // beforeSend: function(){
+                    
+                //     alert("Before");
+                //     saving = true;
+                
+                // },
+                // success: function (data) {
+                    
+                //     alert("Success");
+                //     saving = false;
+                    
+
+                // },
+                //  error: function (xhr, ajaxOptions, thrownError) {
+                //     console.warn("Error sending the file");
+                //     alert("Error: folder not uploaded");
+                    
+                // }
+                
+            });
+                window.location = "/";
+
+            }
+
+        </script>
+
+        
+          
+
+    
+
+
+
+  
+         
+
+    
+         {% endif %}
+         <br>
+          {% if request.user.is_authenticated %}
+        
+   
+        <a href="listt">
+            <button class="btn btn-light border border-dark btn-lg btn-custom-size">
+                <div class="row">
+                    
+                    <div class="col-8">
+                        Sessions
+                    </div>
+                </div>
+            </button>
+        </a>
+
+
+ <!-- <button type="button" class="btn btn-primary" onclick= "loadFiles()">Sessions</button>
+
+
+        <script>
+    function loadFiles(){
+    
+    $.ajax({
+        url: "list/",
+        type: "GET",
+        
+        success: function(data) {
+            
+        }
+    });
+}
+
+</script>
+ -->
+
+         {% endif %}
+
+    
+
+    
+
+{% endblock %}
+
+{% block content %}
+    <p>
+        Welcome the Misconduct Assessment Tool (<i>MAT</i>).
+    </p>
+    <p>
+        The aim of this tool is to help situations where student
+        submissions that are not obvious cases of academic misconduct, but suspected of misconduct due to <it>multiple
+        small segments</it> being <it>similar.</it>
+        The expected number of submissions with that exact
+        combination of segments are estimated.
+        <br>
+        <b>Note:</b> <i>MAT</i> is built to assist the decision making process, it does <i>not</i> replace it.
+    </p>
+
+    <ul>
+        <li>First, <i>upload</i> the suspect file to check and a folder which contains all of the submissions</li>
+        <!--li>Then, you will have a chance to review the files you uploaded and edit them.</li-->
+        <li>Next, <i>select</i> the susceptible code segments from the suspect submission, to be compared with the rest
+            of the submissions
+        </li>
+        <li>Finally, the <i>results</i> page provides more information about the segments and a final report can be
+            generated for sharing.
+        </li>
+    </ul>
+
+    {% if user.is_authenticated %}
+    <p>
+        Note: When you load a previously saved session, please refresh the page or click on next to reflect the changes on the bottom bar.
+    </p>
+    {% endif %}
+
+    {% if not user.is_authenticated %}
+    <p>
+        If you want to end your session, and delete all your files, choose "End session" option from the dropdown menu at 
+        the top right corner of the screen. Otherwise your session will be closed and files deleted after 24 hours of 
+        inactivity.
+    </p>
+    {% endif %}
+
+    <p>
+        Select <i>Next</i> to begin.
+    </p>
+{% endblock %}

@@ -1,0 +1,38 @@
+.contents p, .contents ul {
+    font-size: 22px;
+    line-height: 50px;
+}
+
+#login-dp {
+    min-width: 300px;
+    padding: 14px;
+    overflow: hidden;
+}
+
+#sessionLogout {
+    color: #ffffff;
+}
+
+ul.workspaces-list {
+    margin: 0;
+    padding: 0;
+}
+
+.right-panel button.dropdown-toggle {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 30px
+}
+
+.right-panel button.dropdown-toggle::after {
+    position: absolute;
+    top: 16px;
+    right: 12px;
+}
+
+.sidebar br {
+    content: " ";
+    display: block;
+    margin: 12px;
+}

@@ -1,0 +1,36 @@
+{% extends 'registration/login_layout.html' %}
+
+{% block content %}
+    <div class="container-fluid login-content">
+        {% if form.errors %}
+            <i>Your username and password didn't match. Please try again.</i>
+        {% endif %}
+
+        {% if next %}
+            {% if user.is_authenticated %}
+                <p>Your account doesn't have access to this page. To proceed,
+                    please login with an account that has access.</p>
+            {% else %}
+                <p>Please make sure your login credentials are correct and retry.</p>
+            {% endif %}
+        {% endif %}
+
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <label for="id_username">Username:</label> 
+            <input class="form-control" id="id_username" type="text" name="username" maxlength="150"/>
+            <label for="id_password">Password:</label> 
+            <input class="form-control" type="password" name="password" id="id_password"/>
+            <br>
+            <input class="btn btn-primary btn-block" type="submit" value="Log in"/>
+            <input type="hidden" name="next" value="{{ next }}"/>
+        </form>
+        <div class="dropdown-divider"></div>
+        <span class="login-redirect">Don't have an account?</span>
+        <a class="btn btn-secondary btn-block" href="{% url 'signup' %}?next={{ request.path }}">Sign up</a>
+    </div>
+
+    {# Assumes you setup the password_reset view in your URLconf #}
+    <!--p><a href="{% url 'password_reset' %}">Lost password?</a></p-->
+
+{% endblock %}

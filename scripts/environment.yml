@@ -1,0 +1,13 @@
+name: mat
+channels:
+  - defaults
+dependencies:
+  - certifi=2018.4.16=py37_0
+  - pip=10.0.1=py37_0
+  - python=3.7.0
+  - setuptools=39.2.0=py37_0
+  - wheel=0.31.1=py37_0
+  - git=2.17.0
+  - pip:
+    - beautifulsoup4==4.6.1
+    - django==2.0.7

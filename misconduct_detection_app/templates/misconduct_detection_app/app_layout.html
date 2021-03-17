@@ -1,0 +1,188 @@
+{% extends 'misconduct_detection_app/layout.html' %}
+
+{% block head %}
+{% load static %}
+<script src="{% static 'js/layout.js' %}" defer></script>
+<link rel="stylesheet" href="{% static 'css/app.css' %}">
+
+<script>
+    // Django global variables defined here
+    // Global variables here must be provided by the back-end
+    var fileToComparePathList = JSON.parse("{{ fileToComparePathList|escapejs }}");
+    var resultsPathList = JSON.parse("{{ resultsPathList|escapejs }}");
+    var folderPathList = JSON.parse("{{ folderPathList|escapejs }}");
+    var segmentsPathList = JSON.parse("{{ segmentsPathList|escapejs }}");
+    var detectionLibList = JSON.parse("{{ detectionLibList|escapejs }}");
+    var configsList = JSON.parse("{{ configsList|escapejs }}");
+    
+    var detectionLibSelection = configsList["detectionLibSelection"];
+    var detectionLanguage = configsList["detectionLanguage"];
+    var detectionThreshold = configsList["detectionThreshold"];
+</script>
+{% endblock %}
+
+
+{% block headerRight %}
+
+
+<div class="btn-group" id="login-form-group">
+    {% if user.is_authenticated %}
+        <button 
+            type="button" 
+            class="btn btn-light dropdown-toggle" 
+            data-toggle="dropdown" 
+            aria-haspopup="true" 
+            aria-expanded="false" 
+            id="userSettings" 
+            title="User: {{ user.get_username }}"
+        >
+            User: <i>{{ user.get_username }}</i>
+        </button>
+    {% else %}
+        <button 
+            type="button" 
+            class="btn btn-light dropdown-toggle" 
+            data-toggle="dropdown" 
+            aria-haspopup="true" 
+            aria-expanded="false" 
+            id="userSettings" 
+            title="User: guest"
+        >
+            User: <i>guest</i>
+        </button>
+    {% endif %}
+    <div id="login-dp" class="dropdown-menu pull-right dropdown-menu-right px-4 py-3" aria-labelledby="userSettings">
+        {% if user.is_authenticated %}
+            <!-- Commented lines: Go to previous page next -->
+            <!--a class="btn btn-secondary btn-block" href="{% url 'logout' %}?next={{ request.path }}">Logout</a-->
+            <!-- Go to home page -->
+            <a class="btn btn-secondary btn-block" href="{% url 'logout' %}?next={{ views.index }}">Logout</a>
+        {% else %}
+            <form class="" method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <label for="id_username">Username:</label> 
+                <input class="form-control" id="id_username" type="text" name="username" maxlength="150"/>
+                <label for="id_password">Password:</label> 
+                <input class="form-control" type="password" name="password" id="id_password"/>
+                <br/>
+                <input type="submit" class="btn btn-primary btn-block" value="Log in"/>
+                <input type="hidden" name="next" value="{{ request.get_full_path }}"/>
+            </form>
+            <div class="dropdown-divider"></div>
+            <a class="btn btn-secondary btn-block" href="{% url 'signup' %}?next={{ request.path }}">Sign up</a>
+            <div class="dropdown-divider"></div>
+            <a class="btn btn-secondary btn-block" id="sessionLogout">End session</a>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block base %}
+<!-- Contents on rest of the page-->
+<div class="container-fluid">
+    <br>
+    <nav class="row flex-xl-nowrap">
+        <!-- Left side button area-->
+        <div class="col-12 col-xl-auto bd-sidebar sidebar border-right align-middle">
+            {% block sideButton %}
+            {% endblock %}
+        </div>
+
+        <!-- Right side contents area-->
+        <div class="col-12 col-xl-10 bd-content contents">
+            <div class="row alert-container"></div>
+            {% block content %}
+            {% endblock %}
+        </div>
+
+        <!-- Hide contents area-->
+        <div class="hiddenContentsDiv" id="hiddenContentsDiv" style="display: none">
+        </div>
+    </nav>
+</div>
+
+<!--The programming language choosing panel-->
+<div class="modal fade" id="programmingLanguageChoosingModal" tabindex="-1" role="dialog" aria-labelledby="programmingLanguageChoosingModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="programmingLanguageChoosingModalTitle">
+                Similarity Detection Package Settings
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6 ml-auto border-right">
+                        <h5>Similarity Detection Package:</h5>
+                        <form id="programmingLanguageChoosingDetectionLibForm">
+                        </form>
+                    </div>
+                    <div class="col-md-6 ml-auto" id="programmingLanguageChoosingLanguageFormDiv">
+                        <h5>Submission programming language:</h5>
+                        <h7 id="programmingLanguageChoosingLanguageFormGuide">Select a detection package first.</h7>
+                    </div>
+                </div>
+                <br>
+                <div class="row border-top">
+                    <div class="col-12 ">
+                        <br>
+                        <form>
+                            <h5>Similarity percentage detection threshold:</h5>
+                        <input id="thresholdSlider" type="range" class="custom-range" min="0" max="100" step="10" value="80"/>
+                        <br>
+                            <h6><b>Threshold:</b> <span id="detectionThreshold">80</span>%</h6>
+                        <h7>Any similarities below the threshold will be <i>ignored</i></h7>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="programmingLanguageChoosingModalSave">Save changes</button>
+            <button type="button" class="btn btn-primary" id="programmingLanguageChoosingModalSaveAndRun">Save and re-run detection*</button>
+        </div>
+        <div class="modal-footer note">
+            <span>* Re-running detection will delete previous results</span>
+        </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="cancelButton" tabindex="-1" role="dialog" aria-labelledby="cancelButtonTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelButtonTitle">Warning</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                You are going to lose all changes you have made.
+                Are you sure you want to cancel all your changes and return to first page?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button type="button btn-primary" class="btn btn-primary" style="background-color: red" id="cancelButtonFinal">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="post" id="cancelButtonFrom">
+    {% csrf_token %}
+    <input type="hidden" name="cancelButtonInput" id="cancelButtonInput">
+</form>
+
+<!--The bottom navbar-->
+<!-- hide in small screens -->
+<footer class="footer d-sm-none d-md-block">
+    <nav class="navbar navbar-light bg-light fixed-bottom border-top" id="bottomBar">
+    </nav>
+</footer>
+{% endblock %}

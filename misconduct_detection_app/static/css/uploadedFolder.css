@@ -1,0 +1,9 @@
+#filesList > a {
+    padding-left: 1em;
+    line-height: 150%;
+}
+
+/* for the horizontal centering */
+body, html {
+    width: 100%;
+}

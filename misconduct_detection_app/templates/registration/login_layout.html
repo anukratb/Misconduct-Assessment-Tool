@@ -1,0 +1,19 @@
+{% extends 'misconduct_detection_app/layout.html' %}
+
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/guest.css' %}">
+{% endblock %}
+
+{% block base %}
+<!-- Contents on rest of the page-->
+<div class="container-fluid">
+    <div class="row flex-xl-nowrap">
+        <!-- Right side contents area-->
+        <div class="col-12 bd-content contents">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}

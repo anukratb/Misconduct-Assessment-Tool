@@ -1,0 +1,222 @@
+{% extends 'misconduct_detection_app/app_layout.html' %}
+
+{% block head %}
+    {# load previous script declarations #}
+    {{ block.super }}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/select.css' %}">
+    <!-- Receive Django templates results here-->
+    <script>
+        const codeToCompare = JSON.parse("{{ fileToComparePathJsonString|escapejs }}");
+        const selectedSegments = JSON.parse("{{ segmentJsonString|escapejs }}");
+    </script>
+    <script src="{% static 'js/select.js' %}" defer></script>
+    <!-- Beautify code snippets, source: https://github.com/google/code-prettify -->
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <style>
+        li.L0, li.L1, li.L2, li.L3,
+        li.L5, li.L6, li.L7, li.L8 {
+            list-style-type: decimal !important;
+        }
+    </style>
+    <!-- Tooltips -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+{% endblock %}
+
+{% block sideButton %}
+    <div class="col-md-3">
+        <a href="runningWaitingPage\">
+            <button type="button" class="btn btn-light border border-dark btn-lg btn-custom-size" id="nextButton">
+                <div class="row">
+                    <div class="col-2">
+                        <i class="material-icons">navigate_next</i>
+                    </div>
+                    <div class="col-8">
+                        Next
+                    </div>
+                </div>
+            </button>
+        </a>
+        <br>
+        <a href="\upload\">
+            <button type="button" class="btn btn-light border border-dark btn-lg btn-custom-size">
+                <div class="row">
+                    <div class="col-2">
+                        <i class="material-icons">navigate_before</i>
+                    </div>
+                    <div class="col-8">
+                        Back
+                    </div>
+                </div>
+            </button>
+        </a>
+        <br>
+        <button type="button" class="btn btn-light border border-dark btn-lg btn-custom-size" data-toggle="modal"
+                data-target="#cancelButton">
+            <div class="row">
+                <div class="col-2">
+                    <i class="material-icons">cancel</i>
+                </div>
+                <div class="col-8">
+                    Cancel
+                </div>
+            </div>
+        </button>
+        <br>
+        <br>
+         {% if request.user.is_authenticated %}
+        
+   
+       
+        <!-- <form class="form-inline" role="form" method="post" enctype="multipart/form-data" accept-charset="utf-8"
+              id="savesession">
+            {% csrf_token %}
+            <input type="button" name="button" id="uploadFileInput">
+            
+                            Save Session
+                        
+        
+        </form> -->
+
+        <button type="button" class="btn btn-primary" onclick= "savesess()">Save changes</button>
+        <script>  
+             function savesess() {
+
+                var name = window.prompt("Enter name of the session: ");
+                
+                
+               
+                $.ajax({
+
+
+
+                url: "save/"+name,
+                type: 'POST',
+                cache: false,
+               
+                //headers:{'X-CSRFToken':csrfToken},
+          
+                // beforeSend: function(){
+                    
+                //     alert("Before");
+                //     saving = true;
+                
+                // },
+                success: function (data) {
+                    
+                    alert("Success");
+                    saving = false;
+                    
+
+                },
+                 error: function (xhr, ajaxOptions, thrownError) {
+                    console.warn("Error sending the file");
+                    alert("Can't save more than 5 sessions. Delete atleast 1 session to continue");
+                    
+                }
+                
+            });
+
+            }
+
+        </script>
+
+        {% endif %}
+    </div>
+        
+    <hr>
+
+    <div id="appendButtons">
+    </div>
+
+    <form class="form-inline" role="form" method="post" enctype="multipart/form-data" accept-charset="utf-8" action="uploadFile/" id="selectCode_Form">
+        {% csrf_token %}
+    </form>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row flex-xl-nowrap">
+            <div class="input-group col-12 col-xl-6">
+                <!-- Left side code showing area-->
+                <div class="card border-secondary" title="Select 5+ lines of code" data-placement="top"
+                     id="codeDisplay">
+                    <div class="card-body text-secondary" id="codeDisplayText">
+                        <h5 class="card-title"><!-- #Code Here --></h5>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Buttons in the middle-->
+            <div class="col-xl-1" id="middleButtons">
+                <br>
+                <br>
+                <!-- Big screen = Fixed button -->
+                <button type="button" class="btn btn-light border border-dark d-none d-xl-block position-fixed"
+                        data-toggle="tooltip"
+                        data-placement="top" title="Add selected segment" id="addSegmentButtonBig">
+                    <br>
+                    <i class="material-icons">playlist_add</i>
+                    <br>
+                    <br>
+                </button>
+
+                <!--- Small screen = Normal button -->
+                <button type="button" class="btn btn-light border border-dark btn-block d-xl-none" data-toggle="tooltip"
+                        data-placement="top" title="Add selected segment" id="addSegmentButtonSmall">
+                    <br>
+                    <i class="material-icons">playlist_add</i>
+                    <br>
+                    <br>
+                </button>
+
+                <br>
+                <br>
+
+                <!--button type="button" class="btn btn-light border border-dark btn-block" data-toggle="tooltip"
+                        data-placement="top" title="Save segments" id="saveSegmentButton">
+                    <br>
+                    <i class="material-icons">save</i>
+                    <br>
+                    <br>
+                </button>
+
+                <br>
+                <br-->
+            </div>
+
+            <div class="input-group col-12 col-xl-5">
+                <!-- Right side segments showing area-->
+                <div class="container-fluid col-12" id="segmentDisplayBox">
+                    <div class="card-body text-secondary text-center">
+                        <h5 class="card-title">Select the susceptible segments from the code on the left.</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: none" id="hoverMenu">
+        <p>Test here</p>
+    </div>
+
+    <!-- Warning popup-->
+    <div class="modal fade" id="autoDetectionConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="autoDetectionConfirmationTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="autoDetectionConfirmationTitle">Warning</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="autoDetectionConfirmationModalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Go back</button>
+                    <button type="button" class="btn btn-secondary" id="autoDetectionConfirmationModalConfirm">Still proceed</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
