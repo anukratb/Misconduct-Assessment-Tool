@@ -78,7 +78,7 @@
                 success: function (data) {
                     window.location = "runningWaitingPage";
                     
-                    alert("Success");
+                    
                     saving = false;
                     
 
@@ -135,13 +135,13 @@
                 // },
                 success: function (data) {
                     
-                    alert("Success");
+                    
                     saving = false;
                     
 
                 },
                  error: function (xhr, ajaxOptions, thrownError) {
-                    console.warn("Error sending the file");
+                    
                     alert("Can't save more than 5 sessions. Delete atleast 1 session to continue");
                     
                 }
