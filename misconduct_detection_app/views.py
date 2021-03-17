@@ -99,8 +99,8 @@ def select_index(request):
 	try:
 		file_to_be_compared_path = get_file_to_compare_path(request)
 		file_to_be_compared = os.listdir(file_to_be_compared_path)
-		print(file_to_be_compared)
-		print('Drishyam2')
+		
+		
 		segments = {}
 
 		with open(os.path.join(file_to_be_compared_path, file_to_be_compared[0]), 'r') as f:
@@ -108,14 +108,12 @@ def select_index(request):
 			
 		if os.path.exists(get_segments_path(request)):
 			segment_files = os.listdir(get_segments_path(request))
-			print(segment_files)
-			print('Georgekutty')
+			
 			for segment_file in segment_files:
 				if os.path.isfile(os.path.join(get_segments_path(request), segment_file)):
 					with open(os.path.join(get_segments_path(request), segment_file), 'r') as f:
 						segments[segment_file] = f.read()
-						print(segments[segment_file])
-						print('Fadikutty')
+						
 		file_to_compare_path_json_string = json.dumps(file_to_compare_path, cls=DjangoJSONEncoder)
 		segment_json_string = json.dumps(segments, cls=DjangoJSONEncoder)
 		context = {
@@ -411,24 +409,16 @@ def select_code(request):
 			os.makedirs(get_segments_path(request))
 		except FileExistsError:
 			pass
-		print(request.POST)
+		
 		if len(request.POST) > 1:
 
 			for code_segment in request.POST.keys():
-				#print("Code Segment: " + code_segment)
+				
 
 				if code_segment != "csrfmiddlewaretoken":  # we don't want csrf token here
 					with open(get_segments_path(request) + "/" + code_segment, 'w', newline="\n") as f:
 						f.write(request.POST[code_segment])
-						# file_to_be_compared_path = get_file_to_compare_path(request)
-						# file_to_be_compared = os.listdir(file_to_be_compared_path)
-						# with open(os.path.join(file_to_be_compared_path, file_to_be_compared[0]), 'r') as v:
-						# 	file_to_compare_path = v.read()
-						# f.write(file_to_compare_path)
 						
-						# print(request.POST[code_segment])
-
-						# print('Sauda khara khara')
 		else:
 			shutil.rmtree(get_segments_path(request))
 		return HttpResponse('Selection Succeeded')
@@ -827,13 +817,13 @@ def select_code_moss(request):
 
 	if request.method == 'POST':
 		if os.path.exists(get_segments_path(request)):
-			print('YOLOOOSHOLOO1')
+			
 			shutil.rmtree(get_segments_path(request))
 		try:
 			os.makedirs(get_segments_path(request))
 		except FileExistsError:
 			pass
-		print(request.POST)
+		
 
 		with open(get_configs_path(request) + "/" + "checked_boxes" + '.txt', 'w') as f:
 			f.write('1')
@@ -876,23 +866,7 @@ def select_code_moss(request):
 
 		
 
-		# if len(request.POST) > 1:
-		# 	print('YOLOOOSHOLOO')
-		# 	for code_segment in request.POST.keys():
-		# 		print('YOLOOOSHOLOO')
-
-		# 		if code_segment != "csrfmiddlewaretoken":  # we don't want csrf token here
-
 		
-			
-						
-						# print(request.POST[code_segment])
-
-						# print('Sauda khara khara')
-		# else:
-		# 	print('YOLOOOSHOLOO3')
-		# 	shutil.rmtree(get_segments_path(request))
-		#return HttpResponse('Selection Succeeded')
 		return HttpResponse('Selection Succeeded')
 	else:
 		return HttpResponse('Selection Failed')
