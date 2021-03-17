@@ -28,7 +28,7 @@ Otherwise, install the required `Python` dependencies listed in ``environment.ym
 
 1. Clone the repository
 ```sh
-git clone https://github.com/iamstelios/Misconduct-Assessment-Tool
+git clone https://github.com/anukratb/Misconduct-Assessment-Tool
 ```
 
 2. Create the conda environment:
@@ -87,19 +87,15 @@ python manage.py runserver <optional ip:port>
 
 ## Meta
 
-*Stelios Milisavljevic* – [https://iamstelios.com](https://iamStelios.com) – [https://github.com/iamstelios](https://github.com/iamstelios)
-
-Distributed under the GNU General Public License. See ``LICENSE`` for more information.
-
-Final year project UG4 *BEng Software Engineering*
+Final year project UG4 *BSc.(Hons) Computer Science*
 
 Supervised by *Prof. Kyriakos Kalorkoti*, School of Informatics, University of Edinburgh
 
-System inherited from *Yuechen Xie* – <https://github.com/Weak-Chicken/misconduct_detection_project>
+System inherited from *Arturs Petersons* – https://github.com/ajpetersons/Misconduct-Assessment-Tool
 
 ## Contributing
 
-1. Fork it (<https://github.com/iamstelios/Misconduct-Assessment-Tool>)
+1. Fork it (<https://github.com/anukratb/Misconduct-Assessment-Tool>)
 2. Create your feature branch (`git checkout -b feature/fooBar`)
 3. Commit your changes (`git commit -am 'Add some fooBar'`)
 4. Push to the branch (`git push origin feature/fooBar`)
